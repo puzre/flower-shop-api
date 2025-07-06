@@ -11,6 +11,11 @@ services:
     networks:
       flower-shop-network:
         ipv4_address: 192.168.1.10
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 40s
+      retries: 5
     ports:
       - "1020:3306"
     environment:
@@ -20,6 +25,26 @@ services:
       MARIADB_PASSWORD: password
     volumes:
       - db_data:/var/lib/mariadb
+
+  quarkus_api:
+    restart: always
+    container_name: flower-shop-api-container
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    networks:
+      flower-shop-network:
+        ipv4_address: 192.168.1.20
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "1030:8060"
+    depends_on:
+      maria_db:
+        condition: service_healthy
 
 volumes:
   db_data:
