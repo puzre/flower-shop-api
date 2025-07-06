@@ -9,7 +9,7 @@ public class EncoderService implements IEncoderService {
 
     @Override
     public String hash(String string) {
-        return BcryptUtil.bcryptHash(string, 20);
+        return BcryptUtil.bcryptHash(string, 4);
     }
 
     @Override
